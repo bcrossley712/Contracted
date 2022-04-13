@@ -23,11 +23,11 @@ namespace Contracted.Controllers
     }
 
     [HttpGet("{id}/contractors")]
-    public ActionResult<List<ContractorViewModel>> GetBuildersContractors(int id)
+    public ActionResult<List<BuilderViewModel>> GetBuildersContractors(int id)
     {
       try
       {
-        List<ContractorViewModel> contractors = _contractorsService.GetBuildersContractors(id);
+        List<BuilderViewModel> contractors = _buildersService.GetBuildersContractors(id);
         return Ok(contractors);
       }
       catch (Exception e)

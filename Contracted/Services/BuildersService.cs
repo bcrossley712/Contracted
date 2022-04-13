@@ -30,9 +30,9 @@ namespace Contracted.Services
       return found;
     }
 
-    public List<BuilderViewModel> GetContractorsBuilders(int builderId)
+    public List<BuilderViewModel> GetBuildersContractors(int builderId)
     {
-      return _buildersRepo.GetContractorsBuilders(builderId);
+      return _buildersRepo.GetBuildersContractors(builderId);
     }
     public Builder Create(string userId, Builder data)
     {

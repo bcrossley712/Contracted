@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -26,14 +25,35 @@ namespace Contracted.Repositories
       return _db.Query<Contractor>(sql).ToList();
     }
 
-    internal List<ContractorViewModel> GetBuildersContractors(int builderId)
+    internal List<ContractorViewModel> GetContractorsBuilders(int contractorId)
     {
-      throw new NotImplementedException();
+      string sql = @"
+      SELECT
+        j.*,
+        c.*,
+        b.*
+      FROM jobs j
+      JOIN contractors c ON c.id = j.contractorId
+      JOIN builders b ON b.id = j.builderId
+      WHERE j.contractorId = @contractorId;
+      ";
+      return _db.Query<Job, ContractorViewModel, Builder, ContractorViewModel>(sql, (j, c, b) =>
+      {
+        c.JobId = j.Id;
+        c.BuilderName = b.Name;
+        c.Location = b.Location;
+        return c;
+      }, new { contractorId }).ToList();
     }
 
     public Contractor GetById(int id)
     {
-      throw new NotImplementedException();
+      string sql = @"
+      SELECT *
+      FROM contractors
+      WHERE id = @id;
+      ";
+      return _db.QueryFirstOrDefault<Contractor>(sql, new { id });
     }
     public Contractor Create(Contractor data)
     {
@@ -42,7 +62,7 @@ namespace Contracted.Repositories
       (name, pricePerHour, skill, creatorId)
       VALUES
       (@name, @pricePerHour, @skill, @creatorId);
-      SELECT LAST_INSERT_ID;";
+      SELECT LAST_INSERT_ID();";
       int id = _db.ExecuteScalar<int>(sql, data);
       data.Id = id;
       return data;
@@ -50,7 +70,14 @@ namespace Contracted.Repositories
 
     public void Edit(Contractor data)
     {
-      throw new NotImplementedException();
+      string sql = @"
+      UPDATE contractors
+      SET
+      name = @Name, 
+      pricePerHour = @PricePerHour, 
+      skill = @Skill
+      WHERE id = @Id;";
+      _db.Execute(sql, data);
     }
 
     public void Delete(int id)

@@ -11,6 +11,11 @@ namespace Contracted.Repositories
   {
     private readonly IDbConnection _db;
 
+    public JobsRepository(IDbConnection db)
+    {
+      _db = db;
+    }
+
     public Job Create(Job data)
     {
       string sql = @"
@@ -18,7 +23,7 @@ namespace Contracted.Repositories
       (contractorId, builderId)
       VALUES
       (@ContractorId, @BuilderId);
-      SELECT LAST_INSERT_ID;";
+      SELECT LAST_INSERT_ID();";
       int id = _db.ExecuteScalar<int>(sql, data);
       data.Id = id;
       return data;
@@ -42,7 +47,11 @@ namespace Contracted.Repositories
 
     public Job GetById(int id)
     {
-      throw new NotImplementedException();
+      string sql = @"
+      SELECT * 
+      FROM jobs j
+      WHERE j.id = @id;";
+      return _db.QueryFirstOrDefault<Job>(sql, new { id });
     }
   }
 }
